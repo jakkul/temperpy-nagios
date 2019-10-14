@@ -92,7 +92,7 @@ case $TEMPTOCHECK in
 esac
 
 
-MSG=`echo TEMP is $TEMPTOCHECK C \| temp=$TEMPTOCHECK\;warn=$WARN\;crit=$CRIT`
+MSG=`echo TEMP is $TEMPTOCHECK C on $SENSOR at device $IDdevice \| temp=$TEMPTOCHECK\;warn=$WARN\;crit=$CRIT`
 
 if (( $(echo "$TEMPTOCHECK < $WARN" | bc -l) ))
 then
