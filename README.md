@@ -2,6 +2,7 @@
 nagios plugin for Temper.py
 
 https://pypi.org/project/temper-py/
+https://github.com/ccwienk/temper
 
 # help from the tool
 
