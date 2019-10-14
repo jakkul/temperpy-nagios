@@ -8,8 +8,8 @@ Input parameters:
 
  -c critical level Celcius (default 30)
  -w warning level Celcius (default 26)
- -i which sensor on the USB are we using (default first one)
- -b BUS to use (default first one)
+ -b BUS/device to use (default first one) (starts with 0)
+ -i which sensor on the USB are we using (default first one) (allowed values internal external)
 
  be sure to set proper temper.py path and proper entitlements
 
@@ -27,14 +27,95 @@ Dependencies:
   
  temper.py
  bc
+ getopts 
 
 Versions:
 
- 0.1 no parameters, but runs
+ 0.1 runs, kinda, jakkul@gmail.com
 
 END_COMMENT
 
+TEMPERPATH=temper.py
+
+DEFAULTCRIT=26
+DEFAULTWARN=30
+IDdevice=2
+SENSOR=internal
+SENSOR=external
+SENSOR=internal
+
+WARN=$DEFAULTWARN
+CRIT=$DEFAULTCRIT
+
+while getopts ":w:c:b:i:h" opt; do
+  case ${opt} in
+    h ) # help
+	    echo "HELP MESSAGE"
+	    exit 0
+      ;;
+    w ) # set warning level
+	    WARN=$OPTARG
+      ;;
+    c ) # set critical
+	    CRIT=$OPTARG
+      ;;
+    b ) # set bus-device
+	    IDdevice=$OPTARG
+      ;;
+    i ) # set sensor
+	SENSOR=$OPTARG
+      ;;
+
+    \? ) echo "HELP MESSAGE"
+	    exit 3
+      ;;
+  esac
+done
+
+TEMPEROUT=`$TEMPERPATH | sed -n ${IDdevice}p`
+TEMPINTERNAL=`echo $TEMPEROUT | cut -d " " -f 7 | cut -d "C" -f 1`
+TEMPEXTERNAL=`echo $TEMPEROUT | cut -d " " -f 10 | cut -d "C" -f 1`
+
+if [ $SENSOR == "external" ]
+then
+	export TEMPTOCHECK=$TEMPEXTERNAL
+fi
+
+if [ $SENSOR == "internal" ]
+then
+	export	TEMPTOCHECK=$TEMPINTERNAL
+fi
+
+case $TEMPTOCHECK in
+    ''|*[!0-9.]*) echo bad input ; exit 3 ;;
+    *) A=1 ;;
+esac
 
 
+MSG=`echo TEMP is $TEMPTOCHECK C \| temp=$TEMPTOCHECK\;warn=$WARN\;crit=$CRIT`
 
-echo "A"
+if (( $(echo "$TEMPTOCHECK < $WARN" | bc -l) ))
+then
+	echo OK $MSG
+	exit 0
+fi
+
+if (( $(echo "$TEMPTOCHECK > $CRIT" | bc -l) ))
+then
+        echo CRIT $MSG
+	exit 2
+fi
+	
+
+if (( $(echo "$TEMPTOCHECK > $WARN" | bc -l) )) && (( $( echo "$TEMPTOCHECK < $CRIT" | bc -l ) ))
+then
+	echo WARNING $MSG
+	exit 1
+fi
+
+
+echo $TEMPEROUT 
+
+exit 3
+
+
