@@ -6,7 +6,8 @@ https://pypi.org/project/temper-py/
 # help from the tool
 
 ```
-This bash script reads temperature from https://pypi.org/project/temper-py/ and returns in a format that is consumeable by Nagios. Also provides info for graphing.
+This bash script reads temperature from https://pypi.org/project/temper-py/ 
+and returns in a format that is consumeable by Nagios. Also provides info for graphing.
 
 Input parameters:
 
