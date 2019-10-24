@@ -1,8 +1,10 @@
 # temperpy-nagios
 nagios plugin for Temper.py
 
-https://pypi.org/project/temper-py/
-https://github.com/ccwienk/temper
+https://github.com/urwen/temper
+
+or https://pypi.org/project/temper-py/ from https://github.com/ccwienk/temper
+
 
 # help from the tool
 
